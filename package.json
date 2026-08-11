@@ -39,6 +39,6 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "dssim-core": "^0.1.0"
+    "dssim-core": "^1.0.0"
   }
 }
