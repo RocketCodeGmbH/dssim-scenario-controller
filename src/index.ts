@@ -36,6 +36,7 @@ import {
 } from 'dssim-core';
 
 import https from 'https';
+import http from 'http';
 
 export class ScenarioController implements ScenarioControllerInterface {
   private constructor(
@@ -126,7 +127,7 @@ export class ScenarioController implements ScenarioControllerInterface {
         hostname
       );
 
-    instance.endPointUrl = `https://${hostname}`;
+    instance.endPointUrl = `${process.env.INCLUSTER === '1' ? 'http' : 'https'}://${hostname}`;
     instance.hostname = hostname;
     instance.deploymentName = hostname;
 
@@ -209,11 +210,12 @@ export class ScenarioController implements ScenarioControllerInterface {
 
   private async waitUntilAwailable(instance: Instance): Promise<void> {
     if (instance.healthCheckUrl) {
+      const client = process.env.INCLUSTER === '1' ? http : https;
       await waitFor(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise<boolean>((resolve, reject) => {
           //process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
-          https
+          client
             .get(instance.healthCheckUrl!, resp => {
               this.log(
                 'info',
